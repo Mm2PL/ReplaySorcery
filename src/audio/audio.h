@@ -35,7 +35,7 @@ typedef struct RSAudioThread {
    RSMutex mutex;
 } RSAudioThread;
 
-int rsAudioThreadCreate(RSAudioThread *thread);
+int rsAudioThreadCreate(RSAudioThread *thread, int isInput);
 void rsAudioThreadDestroy(RSAudioThread *thread);
 void rsAudioThreadLock(RSAudioThread *thread);
 void rsAudioThreadUnlock(RSAudioThread *thread);

@@ -35,7 +35,9 @@ typedef struct PulseDevice {
    pa_context *context;
    pa_stream *stream;
    char *sink;
+   char *source;
    int serverChanged;
+   int isInput;
 } PulseDevice;
 
 static int pulseDeviceError(int error) {
@@ -184,6 +186,12 @@ static void pulseDeviceServerInfo(pa_context *context, const pa_server_info *inf
       goto error;
    }
 
+   pulse->source = av_strdup(info->default_source_name);
+   if (pulse->source == NULL) {
+      ret = AVERROR(ENOMEM);
+      goto error;
+   }
+
    return;
 error:
    av_log(NULL, AV_LOG_ERROR, "Failed to handle PulseAudio server info: %s\n",
@@ -198,10 +206,14 @@ static int pulseDeviceStreamAuto(PulseDevice *pulse) {
    if ((ret = pulseDeviceWait(pulse, op)) < 0) {
       return ret;
    }
-
-   char *source = rsFormat("%s.monitor", pulse->sink);
-   if (source == NULL) {
-      return AVERROR(ENOMEM);
+   char *source;
+   if (pulse->isInput) {
+     source = pulse->source;
+   } else {
+     source = rsFormat("%s.monitor", pulse->sink);
+     if (source == NULL) {
+        return AVERROR(ENOMEM);
+     }
    }
    ret = pulseDeviceStreamCreate(pulse, source);
    av_freep(&source);
@@ -299,7 +311,7 @@ static int pulseDeviceNextFrame(RSDevice *device, AVFrame *frame) {
 }
 #endif
 
-int rsPulseDeviceCreate(RSDevice *device) {
+int rsPulseDeviceCreate(RSDevice *device, int isInput) {
 #ifdef RS_BUILD_PULSE_FOUND
    int ret;
    if ((ret = rsDeviceCreate(device)) < 0) {
@@ -307,6 +319,7 @@ int rsPulseDeviceCreate(RSDevice *device) {
    }
 
    PulseDevice *pulse = av_mallocz(sizeof(PulseDevice));
+   pulse->isInput = isInput;
    device->extra = pulse;
    device->destroy = pulseDeviceDestroy;
    device->nextFrame = pulseDeviceNextFrame;

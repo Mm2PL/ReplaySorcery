@@ -20,7 +20,7 @@
 #include "adevice.h"
 #include "../config.h"
 
-int rsAudioDeviceCreate(RSDevice *device) {
+int rsAudioDeviceCreate(RSDevice *device, int isInput) {
    int ret;
    (void)device;
    switch (rsConfig.audioInput) {
@@ -28,10 +28,10 @@ int rsAudioDeviceCreate(RSDevice *device) {
       av_log(NULL, AV_LOG_WARNING, "Audio is disabled\n");
       return AVERROR(ENOSYS);
    case RS_CONFIG_DEVICE_PULSE:
-      return rsPulseDeviceCreate(device);
+      return rsPulseDeviceCreate(device, isInput);
    }
 
-   if ((ret = rsPulseDeviceCreate(device)) >= 0) {
+   if ((ret = rsPulseDeviceCreate(device, isInput)) >= 0) {
       av_log(NULL, AV_LOG_INFO, "Created PulseAudio device\n");
       return ret;
    }

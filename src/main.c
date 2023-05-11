@@ -37,6 +37,7 @@ static RSBuffer videoBuffer;
 static AVPacket *videoPacket;
 static AVFrame *videoFrame;
 static RSAudioThread audioThread;
+static RSAudioThread micThread;
 static RSControl controller;
 static int silence = 0;
 static volatile sig_atomic_t running = 1;
@@ -92,9 +93,11 @@ static int mainStep(void) {
 }
 
 static int mainOutput(void) {
+   av_log(NULL, AV_LOG_WARNING, "Hello world?\n");
    int ret;
    RSOutput output = {0};
    rsAudioThreadLock(&audioThread);
+   rsAudioThreadLock(&micThread);
    if ((ret = rsOutputCreate(&output)) < 0) {
       goto error;
    }
@@ -104,8 +107,14 @@ static int mainOutput(void) {
       goto error;
    }
 
+   const AVCodecParameters *micParams;
+   if ((ret = rsAudioBufferGetParams(&micThread.buffer, &micParams)) < 0) {
+      goto error;
+   }
+
    rsOutputAddStream(&output, videoEncoder.params);
    rsOutputAddStream(&output, audioParams);
+   rsOutputAddStream(&output, micParams);
    if ((ret = rsOutputOpen(&output)) < 0) {
       goto error;
    }
@@ -116,6 +125,9 @@ static int mainOutput(void) {
       goto error;
    }
    if ((ret = rsAudioBufferWrite(&audioThread.buffer, &output, 1, startTime)) < 0) {
+      goto error;
+   }
+   if ((ret = rsAudioBufferWrite(&micThread.buffer, &output, 2, startTime)) < 0) {
       goto error;
    }
    if ((ret = rsBufferWrite(&videoBuffer, &output, 0)) < 0) {
@@ -129,6 +141,7 @@ static int mainOutput(void) {
 error:
    rsOutputDestroy(&output);
    rsAudioThreadUnlock(&audioThread);
+   rsAudioThreadUnlock(&micThread);
    return ret;
 }
 
@@ -193,7 +206,12 @@ int main(int argc, char *argv[]) {
       ret = AVERROR(ENOMEM);
       goto error;
    }
-   if ((ret = rsAudioThreadCreate(&audioThread)) < 0) {
+   if ((ret = rsAudioThreadCreate(&audioThread, 0)) < 0) {
+      av_log(NULL, AV_LOG_WARNING, "Failed to create audio thread: %s\n",
+             av_err2str(ret));
+   }
+
+   if ((ret = rsAudioThreadCreate(&micThread, 1)) < 0) {
       av_log(NULL, AV_LOG_WARNING, "Failed to create audio thread: %s\n",
              av_err2str(ret));
    }
@@ -227,6 +245,7 @@ error:
    mainUnsilence();
    rsControlDestroy(&controller);
    rsAudioThreadDestroy(&audioThread);
+   rsAudioThreadDestroy(&micThread);
    av_frame_free(&videoFrame);
    av_packet_free(&videoPacket);
    rsBufferDestroy(&videoBuffer);

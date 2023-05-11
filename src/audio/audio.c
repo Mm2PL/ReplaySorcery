@@ -57,10 +57,10 @@ error:
    return NULL;
 }
 
-int rsAudioThreadCreate(RSAudioThread *thread) {
+int rsAudioThreadCreate(RSAudioThread *thread, int isInput) {
    int ret;
    rsClear(thread, sizeof(RSAudioThread));
-   if ((ret = rsAudioDeviceCreate(&thread->device)) < 0) {
+   if ((ret = rsAudioDeviceCreate(&thread->device, isInput)) < 0) {
       goto error;
    }
    if ((ret = rsAudioBufferCreate(&thread->buffer, thread->device.params)) < 0) {
