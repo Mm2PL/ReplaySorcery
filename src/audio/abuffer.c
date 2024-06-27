@@ -54,8 +54,7 @@ static int audioBufferSendFrame(RSAudioBuffer *buffer, int index, int pts,
 
    int size = FFMIN(buffer->encoder.params->frame_size, buffer->size - index);
    frame->format = buffer->params->format;
-   frame->channels = buffer->params->channels;
-   frame->channel_layout = buffer->params->channel_layout;
+   frame->ch_layout = buffer->params->ch_layout;
    frame->sample_rate = buffer->params->sample_rate;
    frame->nb_samples = size;
    frame->pts = pts;
@@ -83,7 +82,7 @@ int rsAudioBufferCreate(RSAudioBuffer *buffer, const AVCodecParameters *params) 
       goto error;
    }
 
-   buffer->sampleSize = params->channels * av_get_bytes_per_sample(params->format);
+   buffer->sampleSize = params->ch_layout.nb_channels * av_get_bytes_per_sample(params->format);
    buffer->capacity = rsConfig.recordSeconds * params->sample_rate;
    buffer->data = av_malloc_array((size_t)buffer->capacity, (size_t)buffer->sampleSize);
    if (buffer->data == NULL) {

@@ -24,6 +24,7 @@
 #include <libavcodec/avcodec.h>
 #include <libavutil/avutil.h>
 #include <libavutil/bprint.h>
+#include <libavutil/channel_layout.h>
 #include <libavutil/time.h>
 
 #ifdef RS_BUILD_PULSE_FOUND
@@ -296,8 +297,8 @@ static int pulseDeviceNextFrame(RSDevice *device, AVFrame *frame) {
    int ret;
    PulseDevice *pulse = device->extra;
    frame->format = device->params->format;
-   frame->channels = device->params->channels;
-   frame->channel_layout = device->params->channel_layout;
+   AVChannelLayout l = AV_CHANNEL_LAYOUT_MONO;
+   frame->ch_layout = l;
    frame->sample_rate = device->params->sample_rate;
    while ((ret = pulseDeviceRead(pulse, frame)) == AVERROR(EAGAIN)) {
       if ((ret = pulseDeviceIterate(pulse)) < 0) {
@@ -324,8 +325,8 @@ int rsPulseDeviceCreate(RSDevice *device, int isInput) {
    device->destroy = pulseDeviceDestroy;
    device->nextFrame = pulseDeviceNextFrame;
    device->params->format = AV_SAMPLE_FMT_FLT;
-   device->params->channels = 1;
-   device->params->channel_layout = AV_CH_LAYOUT_MONO;
+   AVChannelLayout l = AV_CHANNEL_LAYOUT_MONO;
+   device->params->ch_layout = l;
    device->params->sample_rate = rsConfig.audioSamplerate;
    if (pulse == NULL) {
       ret = AVERROR(ENOMEM);

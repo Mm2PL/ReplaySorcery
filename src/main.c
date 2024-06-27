@@ -29,6 +29,7 @@
 #include "output.h"
 #include "util.h"
 #include <libavutil/avutil.h>
+#include <libavutil/log.h>
 #include <signal.h>
 
 static RSDevice videoDevice;

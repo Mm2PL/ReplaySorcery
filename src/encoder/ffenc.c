@@ -257,9 +257,9 @@ int rsFFmpegEncoderOpen(RSEncoder *encoder, const AVCodecParameters *params,
       break;
    case AVMEDIA_TYPE_AUDIO:
       rsOptionsSet(&options, &ret, "sample_fmt", "%i", params->format);
-      rsOptionsSet(&options, &ret, "channels", "%i", params->channels);
+      rsOptionsSet(&options, &ret, "channels", "%i", params->ch_layout.nb_channels);
       rsOptionsSet(&options, &ret, "channel_layout", "0x%" PRIx64,
-                   params->channel_layout);
+                   params->ch_layout.u.mask);
       rsOptionsSet(&options, &ret, "sample_rate", "%i", params->sample_rate);
       rsOptionsSet(&options, &ret, "time_base", "1/%i", params->sample_rate);
       if (ret >= 0) {
@@ -309,9 +309,7 @@ int rsFFmpegEncoderOpen(RSEncoder *encoder, const AVCodecParameters *params,
       break;
    case AVMEDIA_TYPE_AUDIO:
       ffmpeg->codecCtx->sample_fmt = format;
-      ffmpeg->codecCtx->channels = av_buffersink_get_channels(ffmpeg->sinkCtx);
-      ffmpeg->codecCtx->channel_layout =
-          av_buffersink_get_channel_layout(ffmpeg->sinkCtx);
+      av_buffersink_get_ch_layout(ffmpeg->sinkCtx,&ffmpeg->codecCtx->ch_layout);
       ffmpeg->codecCtx->sample_rate = av_buffersink_get_sample_rate(ffmpeg->sinkCtx);
       ffmpeg->codecCtx->profile = rsConfig.audioProfile;
       if (rsConfig.audioBitrate != RS_CONFIG_AUTO) {
