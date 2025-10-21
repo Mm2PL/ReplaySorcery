@@ -28,27 +28,19 @@
 #include <libswscale/swscale.h>
 
 #define CONFIG_CONST(name, value, group)                                                 \
-   { #name, NULL, 0, AV_OPT_TYPE_CONST, {.i64 = value }, 0, 0, 0, #group }
+   {#name, NULL, 0, AV_OPT_TYPE_CONST, {.i64 = value}, 0, 0, 0, #group}
 #define CONFIG_STRING(name, def)                                                         \
-   {                                                                                     \
-#name, NULL, offsetof(RSConfig, name), AV_OPT_TYPE_STRING,                         \
-          {.str = def }, 0, 0, 0, NULL                                                   \
-   }
+   {#name, NULL, offsetof(RSConfig, name), AV_OPT_TYPE_STRING, {.str = def}, 0, 0,       \
+    0,     NULL}
 #define CONFIG_INT(name, def, min, max, group)                                           \
-   {                                                                                     \
-#name, NULL, offsetof(RSConfig, name), AV_OPT_TYPE_INT,                            \
-          {.i64 = def }, min, max, 0, #group                                             \
-   }
+   {#name, NULL,  offsetof(RSConfig, name), AV_OPT_TYPE_INT, {.i64 = def}, min, max,     \
+    0,     #group}
 #define CONFIG_INT64(name, def, min, max, group)                                         \
-   {                                                                                     \
-#name, NULL, offsetof(RSConfig, name), AV_OPT_TYPE_INT64,                          \
-          {.i64 = def }, min, max, 0, #group                                             \
-   }
+   {#name, NULL,  offsetof(RSConfig, name), AV_OPT_TYPE_INT64, {.i64 = def}, min, max,   \
+    0,     #group}
 #define CONFIG_FLAGS(name, def, group)                                                   \
-   {                                                                                     \
-#name, NULL, offsetof(RSConfig, name), AV_OPT_TYPE_FLAGS,                          \
-          {.i64 = def }, 0, INT_MAX, 0, #group                                           \
-   }
+   {#name, NULL,  offsetof(RSConfig, name), AV_OPT_TYPE_FLAGS, {.i64 = def}, 0, INT_MAX, \
+    0,     #group}
 
 // Remember to update replay-sorcery.conf
 static const AVOption configOptions[] = {
@@ -87,10 +79,10 @@ static const AVOption configOptions[] = {
     CONFIG_CONST(x265, RS_CONFIG_ENCODER_X265, videoEncoder),
     CONFIG_CONST(vaapi_h264, RS_CONFIG_ENCODER_VAAPI_H264, videoEncoder),
     CONFIG_CONST(vaapi_hevc, RS_CONFIG_ENCODER_VAAPI_HEVC, videoEncoder),
-    CONFIG_INT(videoProfile, FF_PROFILE_H264_BASELINE, 0, INT_MAX, videoProfile),
-    CONFIG_CONST(baseline, FF_PROFILE_H264_BASELINE, videoProfile),
-    CONFIG_CONST(main, FF_PROFILE_H264_MAIN, videoProfile),
-    CONFIG_CONST(high, FF_PROFILE_H264_HIGH, videoProfile),
+    CONFIG_INT(videoProfile, AV_PROFILE_H264_BASELINE, 0, INT_MAX, videoProfile),
+    CONFIG_CONST(baseline, AV_PROFILE_H264_BASELINE, videoProfile),
+    CONFIG_CONST(main, AV_PROFILE_H264_MAIN, videoProfile),
+    CONFIG_CONST(high, AV_PROFILE_H264_HIGH, videoProfile),
     CONFIG_INT(videoPreset, RS_CONFIG_PRESET_FAST, RS_CONFIG_PRESET_FAST,
                RS_CONFIG_PRESET_SLOW, videoPreset),
     CONFIG_CONST(fast, RS_CONFIG_PRESET_FAST, videoPreset),
@@ -113,10 +105,10 @@ static const AVOption configOptions[] = {
     CONFIG_CONST(auto, RS_CONFIG_AUTO, audioEncoder),
     CONFIG_CONST(aac, RS_CONFIG_ENCODER_AAC, audioEncoder),
     CONFIG_CONST(fdk, RS_CONFIG_ENCODER_FDK, audioEncoder),
-    CONFIG_INT(audioProfile, FF_PROFILE_AAC_LOW, 0, INT_MAX, audioProfile),
-    CONFIG_CONST(low, FF_PROFILE_AAC_LOW, audioProfile),
-    CONFIG_CONST(main, FF_PROFILE_AAC_MAIN, audioProfile),
-    CONFIG_CONST(high, FF_PROFILE_AAC_HE, audioProfile),
+    CONFIG_INT(audioProfile, AV_PROFILE_AAC_LOW, 0, INT_MAX, audioProfile),
+    CONFIG_CONST(low, AV_PROFILE_AAC_LOW, audioProfile),
+    CONFIG_CONST(main, AV_PROFILE_AAC_MAIN, audioProfile),
+    CONFIG_CONST(high, AV_PROFILE_AAC_HE, audioProfile),
     CONFIG_INT64(audioBitrate, RS_CONFIG_AUTO, RS_CONFIG_AUTO, INT_MAX, auto),
     CONFIG_INT(controller, RS_CONFIG_AUTO, RS_CONFIG_AUTO, RS_CONFIG_CONTROL_COMMAND,
                controller),

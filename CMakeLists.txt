@@ -66,7 +66,7 @@ set(headers
 )
 
 add_executable(${binary} ${sources})
-set_property(TARGET ${binary} PROPERTY C_STANDARD 99)
+set_property(TARGET ${binary} PROPERTY C_STANDARD 23)
 
 function(target_c_flag target flag var)
    check_c_compiler_flag(${flag} ${var})

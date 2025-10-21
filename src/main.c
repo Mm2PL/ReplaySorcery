@@ -31,6 +31,7 @@
 #include <libavutil/avutil.h>
 #include <libavutil/log.h>
 #include <signal.h>
+#include <unistd.h>
 
 static RSDevice videoDevice;
 static RSEncoder videoEncoder;
@@ -189,6 +190,8 @@ int main(int argc, char *argv[]) {
                   "This is free software, and you are welcome to redistribute it\n"
                   "under certain conditions; see COPYING for details.");
    av_log(NULL, AV_LOG_INFO, "FFmpeg version: %s\n", av_version_info());
+   av_log(NULL, AV_LOG_INFO, "RUID: %d\n", getuid());
+   av_log(NULL, AV_LOG_INFO, "EUID: %d\n", geteuid());
 
    if ((ret = rsVideoDeviceCreate(&videoDevice)) < 0) {
       goto error;

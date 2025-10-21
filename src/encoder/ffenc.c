@@ -164,7 +164,7 @@ int rsFFmpegEncoderCreate(RSEncoder *encoder, const char *name, const char *filt
    }
    ffmpeg->codecCtx->flags = AV_CODEC_FLAG_GLOBAL_HEADER;
    ffmpeg->codecCtx->thread_count = 1;
-   ffmpeg->codecCtx->profile = FF_PROFILE_RESERVED;
+   ffmpeg->codecCtx->profile = AV_PROFILE_RESERVED;
 
    ffmpeg->filterGraph = avfilter_graph_alloc();
    if (ffmpeg->filterGraph == NULL) {
@@ -300,7 +300,7 @@ int rsFFmpegEncoderOpen(RSEncoder *encoder, const AVCodecParameters *params,
           av_buffersink_get_sample_aspect_ratio(ffmpeg->sinkCtx);
       ffmpeg->codecCtx->framerate = av_buffersink_get_frame_rate(ffmpeg->sinkCtx);
       ffmpeg->codecCtx->gop_size = rsConfig.videoGOP;
-      if (ffmpeg->codecCtx->profile == FF_PROFILE_RESERVED) {
+      if (ffmpeg->codecCtx->profile == AV_PROFILE_RESERVED) {
          ffmpeg->codecCtx->profile = rsConfig.videoProfile;
       }
       if (rsConfig.videoBitrate != RS_CONFIG_AUTO) {
@@ -309,7 +309,7 @@ int rsFFmpegEncoderOpen(RSEncoder *encoder, const AVCodecParameters *params,
       break;
    case AVMEDIA_TYPE_AUDIO:
       ffmpeg->codecCtx->sample_fmt = format;
-      av_buffersink_get_ch_layout(ffmpeg->sinkCtx,&ffmpeg->codecCtx->ch_layout);
+      av_buffersink_get_ch_layout(ffmpeg->sinkCtx, &ffmpeg->codecCtx->ch_layout);
       ffmpeg->codecCtx->sample_rate = av_buffersink_get_sample_rate(ffmpeg->sinkCtx);
       ffmpeg->codecCtx->profile = rsConfig.audioProfile;
       if (rsConfig.audioBitrate != RS_CONFIG_AUTO) {

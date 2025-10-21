@@ -23,7 +23,7 @@
 
 int rsAacEncoderCreate(RSEncoder *encoder, const AVCodecParameters *params) {
    int ret;
-   if (rsConfig.audioProfile == FF_PROFILE_AAC_HE) {
+   if (rsConfig.audioProfile == AV_PROFILE_AAC_HE) {
       av_log(NULL, AV_LOG_WARNING, "High profile is not supported\n");
    }
    if ((ret = rsFFmpegEncoderCreate(encoder, "aac", "aformat=fltp")) < 0) {

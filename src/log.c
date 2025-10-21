@@ -106,7 +106,7 @@ void rsLogSilence(int silence) {
       }
    } else if (silenceCounter == 0) {
       av_log(NULL, AV_LOG_WARNING, "Silencing logs for now\n");
-      av_log_set_level(AV_LOG_FATAL);
+      //av_log_set_level(AV_LOG_FATAL);
    }
    silenceCounter = silence;
    rsMutexUnlock(&silenceMutex);

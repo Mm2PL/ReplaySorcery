@@ -34,9 +34,9 @@ int rsOpenH264EncoderCreate(RSEncoder *encoder, const AVCodecParameters *params)
 
    AVCodecContext *codecCtx = rsFFmpegEncoderGetContext(encoder);
    codecCtx->slices = 1;
-   if (rsConfig.videoProfile == FF_PROFILE_H264_BASELINE) {
+   if (rsConfig.videoProfile == AV_PROFILE_H264_BASELINE) {
       av_log(NULL, AV_LOG_WARNING, "Baseline profile is not supported\n");
-      codecCtx->profile = FF_PROFILE_H264_CONSTRAINED_BASELINE;
+      codecCtx->profile = AV_PROFILE_H264_CONSTRAINED_BASELINE;
    }
    if (rsConfig.videoQuality != RS_CONFIG_AUTO) {
       codecCtx->qmax = rsConfig.videoQuality;

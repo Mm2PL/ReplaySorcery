@@ -33,7 +33,7 @@ int rsX265EncoderCreate(RSEncoder *encoder, const AVCodecParameters *params) {
    }
 
    AVCodecContext *codecCtx = rsFFmpegEncoderGetContext(encoder);
-   codecCtx->profile = FF_PROFILE_HEVC_MAIN;
+   codecCtx->profile = AV_PROFILE_HEVC_MAIN;
    rsFFmpegEncoderSetOption(encoder, "forced-idr", "true");
    if (rsConfig.videoQuality != RS_CONFIG_AUTO) {
       if (rsConfig.videoPreset == RS_CONFIG_PRESET_FAST) {
